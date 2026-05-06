@@ -3,8 +3,8 @@ import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  applicationName: "Komitmen & To-do",
-  title: "Komitmen & To-do",
+  applicationName: "BayarTrack",
+  title: "BayarTrack",
   description: "PWA untuk track komitmen bulanan dan to-do list.",
   appleWebApp: {
     capable: true,
