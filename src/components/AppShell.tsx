@@ -10,6 +10,7 @@ import { canNotify, computeNotifCandidates, sendLocalNotifications } from "@/lib
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { pullRemoteState, pushRemoteState } from "@/lib/remoteState";
 import { readState, writeState } from "@/lib/storage";
+import { migrateState } from "@/lib/migrations";
 
 const navItems = [
   { href: "/", label: "Dashboard" },
@@ -92,6 +93,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       window.clearTimeout(t);
     };
   }, [state]);
+
+  useEffect(() => {
+    // Local migrations (e.g. add todoLists, listId)
+    const { state: next, changed } = migrateState(readState());
+    if (changed) {
+      writeState(next);
+      broadcastStoreChange();
+    }
+  }, []);
 
   useEffect(() => {
     const monthKey = getCurrentMonthKey();

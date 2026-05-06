@@ -1,11 +1,12 @@
 "use client";
 
-import type { AppSettings, CommitmentTemplate, MonthRecord, TodoItem } from "@/lib/types";
+import type { AppSettings, CommitmentTemplate, MonthRecord, TodoItem, TodoList } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/types";
 
 type StorageKey =
   | "komitmen.v1.templates"
   | "komitmen.v1.months"
+  | "komitmen.v1.todoLists"
   | "komitmen.v1.todos"
   | "komitmen.v1.settings"
   | "komitmen.v1.notifs";
@@ -40,6 +41,7 @@ export function writeKey<T>(key: StorageKey, value: T): void {
 export type AppState = {
   templates: CommitmentTemplate[];
   months: Record<string, MonthRecord>;
+  todoLists: TodoList[];
   todos: TodoItem[];
   settings: AppSettings;
   notifs: Record<string, string>; // notifKey -> lastSentISO
@@ -48,6 +50,7 @@ export type AppState = {
 export function readState(): AppState {
   const templates = readKey<CommitmentTemplate[]>("komitmen.v1.templates", []);
   const months = readKey<Record<string, MonthRecord>>("komitmen.v1.months", {});
+  const todoLists = readKey<TodoList[]>("komitmen.v1.todoLists", []);
   const todos = readKey<TodoItem[]>("komitmen.v1.todos", []);
   const settings = readKey<AppSettings>("komitmen.v1.settings", DEFAULT_SETTINGS);
   const notifs = readKey<Record<string, string>>("komitmen.v1.notifs", {});
@@ -55,6 +58,7 @@ export function readState(): AppState {
   return {
     templates: Array.isArray(templates) ? templates : [],
     months: months && typeof months === "object" ? months : {},
+    todoLists: Array.isArray(todoLists) ? todoLists : [],
     todos: Array.isArray(todos) ? todos : [],
     settings: settings && typeof settings === "object" ? { ...DEFAULT_SETTINGS, ...settings } : DEFAULT_SETTINGS,
     notifs: notifs && typeof notifs === "object" ? notifs : {},
@@ -64,8 +68,8 @@ export function readState(): AppState {
 export function writeState(state: AppState): void {
   writeKey("komitmen.v1.templates", state.templates);
   writeKey("komitmen.v1.months", state.months);
+  writeKey("komitmen.v1.todoLists", state.todoLists);
   writeKey("komitmen.v1.todos", state.todos);
   writeKey("komitmen.v1.settings", state.settings);
   writeKey("komitmen.v1.notifs", state.notifs);
 }
-

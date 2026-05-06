@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
-import type { AppSettings, CommitmentTemplate, MonthRecord, TodoItem } from "@/lib/types";
+import type { AppSettings, CommitmentTemplate, MonthRecord, TodoItem, TodoList } from "@/lib/types";
 import { readState, writeState, type AppState } from "@/lib/storage";
 
 type Listener = () => void;
@@ -10,6 +10,7 @@ const listeners = new Set<Listener>();
 const SERVER_SNAPSHOT: AppState = {
   templates: [],
   months: {},
+  todoLists: [],
   todos: [],
   settings: {
     notificationsEnabled: false,
@@ -24,6 +25,7 @@ const SERVER_SNAPSHOT: AppState = {
 const SIGNATURE_KEYS = [
   "komitmen.v1.templates",
   "komitmen.v1.months",
+  "komitmen.v1.todoLists",
   "komitmen.v1.todos",
   "komitmen.v1.settings",
   "komitmen.v1.notifs",
@@ -88,6 +90,7 @@ export function useAppState() {
       setTemplates: (templates: CommitmentTemplate[]) =>
         setState((s) => ({ ...s, templates })),
       setMonths: (months: Record<string, MonthRecord>) => setState((s) => ({ ...s, months })),
+      setTodoLists: (todoLists: TodoList[]) => setState((s) => ({ ...s, todoLists })),
       setTodos: (todos: TodoItem[]) => setState((s) => ({ ...s, todos })),
       setSettings: (settings: AppSettings) => setState((s) => ({ ...s, settings })),
       setNotifs: (notifs: Record<string, string>) => setState((s) => ({ ...s, notifs })),

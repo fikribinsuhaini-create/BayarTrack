@@ -40,8 +40,17 @@ export type MonthRecord = {
 
 export type TodoPriority = "Low" | "Medium" | "High";
 
+export type TodoList = {
+  id: Id;
+  name: string;
+  archived: boolean;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+};
+
 export type TodoItem = {
   id: Id;
+  listId: Id;
   title: string;
   done: boolean;
   priority: TodoPriority;
@@ -66,4 +75,3 @@ export const DEFAULT_SETTINGS: AppSettings = {
   quietHoursStart: 8,
   quietHoursEnd: 22,
 };
-
