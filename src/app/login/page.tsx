@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSupabase, getFixedEmail, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabase, getFixedEmail, getMissingSupabaseEnvs, isSupabaseConfigured } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -27,7 +27,10 @@ export default function LoginPage() {
 
   const signIn = async () => {
     setError("");
-    if (!isSupabaseConfigured()) return setError("Supabase env belum set. Isi `.env.local` ikut `.env.example`.");
+    if (!isSupabaseConfigured()) {
+      const missing = getMissingSupabaseEnvs();
+      return setError(`Supabase env belum set: ${missing.join(", ") || "unknown"}. (Vercel: set env + Redeploy)`);
+    }
     if (!fixedEmail) return setError("Env `NEXT_PUBLIC_FIXED_EMAIL` belum set. Rujuk `.env.example`.");
     if (!passcode.trim()) return setError("Passcode diperlukan.");
     const supabase = getSupabase();
