@@ -9,20 +9,35 @@ export type RemoteRow = {
   updated_at: string;
 };
 
-export async function pullRemoteState(): Promise<AppState | null> {
+export type PullRemoteStateResult =
+  | { kind: "found"; state: AppState }
+  | { kind: "missing" }
+  | { kind: "error"; error: unknown };
+
+function isMissingRowError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const anyErr = error as { code?: unknown; status?: unknown };
+  // PostgREST "Results contain 0 rows" when using `.single()`.
+  return anyErr.code === "PGRST116" || anyErr.status === 406;
+}
+
+export async function pullRemoteState(): Promise<PullRemoteStateResult> {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) return { kind: "error", error: new Error("Supabase not configured") };
 
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id;
-  if (!userId) return null;
+  if (!userId) return { kind: "error", error: new Error("No user session") };
 
   const { data, error } = await supabase.from("app_state").select("data").eq("user_id", userId).single();
   if (error) {
-    // 406 / PGRST116 = no rows; treat as empty state
-    return null;
+    if (isMissingRowError(error)) return { kind: "missing" };
+    return { kind: "error", error };
   }
-  return (data as { data: AppState }).data ?? null;
+
+  const state = (data as { data: AppState | null }).data ?? null;
+  if (!state) return { kind: "missing" };
+  return { kind: "found", state };
 }
 
 export async function pushRemoteState(state: AppState): Promise<void> {

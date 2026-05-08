@@ -54,16 +54,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       const { data } = await supabase.auth.getSession();
       if (!data.session) return;
       try {
-        const remote = await pullRemoteState();
+        const res = await pullRemoteState();
         if (cancelled) return;
-        if (remote) {
-          writeState(remote);
+
+        if (res.kind === "found") {
+          writeState(res.state);
           broadcastStoreChange();
-        } else {
-          // seed remote with local if remote empty
+          return;
+        }
+
+        if (res.kind === "missing") {
+          // seed remote with local ONLY when we are sure remote row doesn't exist
           const local = readState();
           await pushRemoteState(local);
+          return;
         }
+
+        // res.kind === "error" -> do nothing (avoid overwriting remote with empty local on transient/RLS errors)
       } catch {
         // ignore
       }
