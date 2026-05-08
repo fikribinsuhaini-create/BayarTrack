@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
-import type { AppSettings, CommitmentTemplate, MonthRecord, TodoItem, TodoList } from "@/lib/types";
+import type { AppSettings, CommitmentTemplate, Habit, MonthRecord, TodoItem, TodoList } from "@/lib/types";
 import { readState, writeState, type AppState } from "@/lib/storage";
 
 type Listener = () => void;
@@ -12,6 +12,8 @@ const SERVER_SNAPSHOT: AppState = {
   months: {},
   todoLists: [],
   todos: [],
+  habits: [],
+  habitChecks: {},
   settings: {
     notificationsEnabled: false,
     notifyCommitmentsDaysBefore: 3,
@@ -27,6 +29,8 @@ const SIGNATURE_KEYS = [
   "komitmen.v1.months",
   "komitmen.v1.todoLists",
   "komitmen.v1.todos",
+  "komitmen.v1.habits",
+  "komitmen.v1.habitChecks",
   "komitmen.v1.settings",
   "komitmen.v1.notifs",
 ] as const;
@@ -92,6 +96,8 @@ export function useAppState() {
       setMonths: (months: Record<string, MonthRecord>) => setState((s) => ({ ...s, months })),
       setTodoLists: (todoLists: TodoList[]) => setState((s) => ({ ...s, todoLists })),
       setTodos: (todos: TodoItem[]) => setState((s) => ({ ...s, todos })),
+      setHabits: (habits: Habit[]) => setState((s) => ({ ...s, habits })),
+      setHabitChecks: (habitChecks: Record<string, string[]>) => setState((s) => ({ ...s, habitChecks })),
       setSettings: (settings: AppSettings) => setState((s) => ({ ...s, settings })),
       setNotifs: (notifs: Record<string, string>) => setState((s) => ({ ...s, notifs })),
       patch: (patch: Partial<AppState>) => setState((s) => ({ ...s, ...patch })),

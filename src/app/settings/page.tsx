@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { requestNotificationPermission } from "@/lib/notifications";
+import Link from "next/link";
 
 export default function SettingsPage() {
   const { state, api } = useAppState();
@@ -106,6 +107,18 @@ export default function SettingsPage() {
         <div className="text-sm font-medium">Data</div>
         <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
           Data sekarang disimpan dalam <span className="font-medium">LocalStorage</span>. Bila dah ready, kita boleh migrate ke Supabase/Firebase.
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-sm font-medium">Report</div>
+        <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          Tempat untuk heatmap + ringkasan habits/komitmen.
+        </div>
+        <div className="mt-3 text-sm">
+          <Link href="/report" className="font-medium underline">
+            Buka Report
+          </Link>
         </div>
       </Card>
     </div>

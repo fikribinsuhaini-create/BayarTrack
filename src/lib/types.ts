@@ -75,3 +75,15 @@ export const DEFAULT_SETTINGS: AppSettings = {
   quietHoursStart: 8,
   quietHoursEnd: 22,
 };
+
+export type Habit = {
+  id: Id;
+  name: string;
+  color: "red" | "blue" | "cyan" | "green" | "purple" | "amber" | "zinc";
+  goalPerWeek: number; // 1..7
+  programWeeks: number | null; // null = forever, else 1..52
+  startWeekStart: string; // ISO date (YYYY-MM-DD), monday of week
+  archived: boolean;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+};

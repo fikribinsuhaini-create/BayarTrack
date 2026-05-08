@@ -15,7 +15,7 @@ import { migrateState } from "@/lib/migrations";
 const navItems = [
   { href: "/", label: "Dashboard" },
   { href: "/komitmen", label: "Komitmen" },
-  { href: "/sejarah", label: "Sejarah" },
+  { href: "/habits", label: "Habits" },
   { href: "/todo", label: "To-do" },
   { href: "/settings", label: "Settings" },
 ];
